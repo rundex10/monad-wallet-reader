@@ -4,30 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monad Wallet Reader</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a001f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #d291ff;
+        }
+        input, button {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            margin: 5px;
+            font-size: 16px;
+        }
+        input {
+            width: 300px;
+        }
+        button {
+            background-color: #a64dff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #8c1aff;
+        }
+        .card {
+            background-color: #33004d;
+            padding: 15px;
+            margin: 15px auto;
+            border-radius: 12px;
+            width: 250px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #d291ff;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>💜 Monad Wallet Reader</h1>
-        <div class="input-group">
-            <input type="text" id="walletAddress" placeholder="Masukkan alamat wallet Monad">
-            <button onclick="checkWallet()">Cek Wallet</button>
+    <h1>💜 Monad Wallet Reader</h1>
+    <input type="text" id="walletAddress" placeholder="Masukkan alamat wallet Monad">
+    <button onclick="checkWallet()">Cek Wallet</button>
+
+    <div class="loading" id="loading">⏳ Loading...</div>
+
+    <div id="results">
+        <div class="card" id="balanceCard">
+            <p>Total Balance:</p>
+            <h2 id="balance">-</h2>
         </div>
-
-        <div id="loading" class="loading" style="display:none;">⏳ Loading...</div>
-
-        <div id="results" style="display:none;">
-            <div class="card">
-                <p>Total Balance:</p>
-                <h2 id="balance">-</h2>
-            </div>
-            <div class="card">
-                <p>Total Transactions:</p>
-                <h2 id="transactions">-</h2>
-            </div>
+        <div class="card" id="txCard">
+            <p>Total Transactions:</p>
+            <h2 id="transactions">-</h2>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const API_KEY = "P9QADugjmL2Ib2ivnLv_j";
+        const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${API_KEY}`;
+
+        async function checkWallet() {
+            const address = document.getElementById("walletAddress").value.trim();
+            if (!address) {
+                alert("Masukkan alamat wallet Monad!");
+                return;
+            }
+
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("balanceCard").classList.remove("show");
+            document.getElementById("txCard").classList.remove("show");
+
+            try {
+                // Ambil balance
+                const balanceRes = await fetch(BASE_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "eth_getBalance",
+                        params: [address, "latest"],
+                        id: 1
+                    })
+                });
+                const balanceData = await balanceRes.json();
+                const balanceEth = parseInt(balanceData.result, 16) / 1e18;
+
+                // Ambil total transaksi
+                const txRes = await fetch(BASE_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        method: "eth_getTransactionCount",
+                        params: [address, "latest"],
+                        id: 2
+                    })
+                });
+                const txData = await txRes.json();
+                const totalTx = parseInt(txData.result, 16);
+
+                document.getElementById("loading").style.display = "none";
+
+                // Tampilkan hasil dengan animasi
+                document.getElementById("balance").innerText = balanceEth.toFixed(4) + " MON";
+                setTimeout(() => document.getElementById("balanceCard").classList.add("show"), 200);
+
+                document.getElementById("transactions").innerText = totalTx;
+                setTimeout(() => document.getElementById("txCard").classList.add("show"), 600);
+
+            } catch (err) {
+                document.getElementById("loading").style.display = "none";
+                alert("Gagal mengambil data. Cek API Key atau alamat wallet.");
+                console.error(err);
+            }
+        }
+    </script>
 </body>
 </html>
