@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Monad Wallet Reader</title>
+</head>
+<body>
+  <h2>Monad Wallet Reader</h2>
+  <input id="addr" placeholder="Masukkan alamat Monad (0x...)" style="width:300px;">
+  <button id="checkBtn">Cek</button>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('checkBtn').onclick = async () => {
+      const addr = document.getElementById('addr').value.trim();
+      if (!addr) return alert('Alamat harus diisi');
+
+      document.getElementById('result').innerHTML = 'Loading...';
+
+      try {
+        const res = await fetch(`/.netlify/functions/getData?address=${addr}`);
+        const data = await res.json();
+
+        document.getElementById('result').innerHTML = `
+          <p><b>Total Balance:</b> ${data.balance} MON</p>
+          <p><b>Total TX:</b> ${data.txCount}</p>
+          <p><b>Total NFTs:</b> ${data.nftCount}</p>
+        `;
+      } catch (err) {
+        document.getElementById('result').innerHTML = 'Error: ' + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
