@@ -1,158 +1,226 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monad Wallet Reader</title>
-    <style>
-        @font-face {
-            font-family: 'CustomFont';
-            src: url('font.ttf') format('truetype');
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monad Allocation Checker (Beta)</title>
+<style>
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.ttf') format('truetype');
+}
 
-        body {
-            font-family: 'CustomFont', Arial, sans-serif;
-            background: url('bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+body {
+    font-family: 'CustomFont', sans-serif;
+    background: url('bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
 
-        h1 {
-            color: #e0b3ff;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
+h1 {
+    margin-top: 40px;
+    font-size: 2em;
+    color: #e0aaff;
+}
 
-        body, input, button {
-            font-family: 'CustomFont', Arial, sans-serif;
-        }
+input, button {
+    font-family: 'CustomFont', sans-serif;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+}
 
-        .wallet-input {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            width: 300px;
-            outline: none;
-            background: linear-gradient(135deg, #3b0066, #5e00a3);
-            color: white;
-            font-size: 16px;
-        }
+input {
+    width: 320px;
+}
 
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #5e00a3, #a32cc4);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            font-size: 16px;
-        }
+button {
+    background: linear-gradient(90deg, #a020f0, #ff00ff);
+    color: white;
+    cursor: pointer;
+}
 
-        .btn:hover {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, #a32cc4, #5e00a3);
-        }
+button:hover {
+    opacity: 0.9;
+}
 
-        .card {
-            background: rgba(91, 0, 133, 0.6);
-            padding: 15px;
-            margin: 20px auto;
-            width: 300px;
-            border-radius: 10px;
-            border: 2px solid #b366ff;
-            font-size: 18px;
-        }
+.card {
+    background: rgba(64, 0, 128, 0.7);
+    border: 2px solid #a020f0;
+    border-radius: 10px;
+    margin: 15px auto;
+    padding: 15px;
+    width: 300px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease forwards;
+    opacity: 0;
+}
 
-        /* Loading animasi titik bergelombang */
-        .loading {
-            display: inline-block;
-            font-size: 20px;
-        }
+.card.show {
+    opacity: 1;
+}
 
-        .dot {
-            display: inline-block;
-            animation: wave 3s infinite;
-        }
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
 
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
+.loading {
+    font-size: 20px;
+    display: inline-block;
+}
 
-        @keyframes wave {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-8px); }
-        }
-    </style>
+.loading span {
+    display: inline-block;
+    animation: wave 1s infinite;
+}
+
+.loading span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes wave {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+}
+
+/* left */
+.footer-left {
+    position: fixed;
+    bottom: 15px;
+    left: 20px;
+    font-size: 14px;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 10px;
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+}
+
+/* Footer kanan */
+.footer-right {
+    position: fixed;
+    bottom: 15px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 2px solid white;
+    backdrop-filter: blur(5px);
+}
+
+.profile-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.footer-right a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-right a:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
 <body>
-    <h1>💜 Monad Wallet Reader</h1>
-    <input type="text" id="walletAddress" class="wallet-input" placeholder="Masukkan alamat Monad">
-    <button onclick="checkWallet()" class="btn">Cek Wallet</button>
 
-    <div id="result" style="margin-top: 20px;"></div>
+<h1>💜 Monad Allocation Checker (Beta)</h1>
 
-    <script>
-        const ALCHEMY_KEY = "P9QADugjmL2Ib2ivnLv_j"; // API key langsung di kode
-        const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+<input type="text" id="walletAddress" placeholder="Masukkan alamat wallet Monad">
+<button onclick="checkWallet()">Begin</button>
 
-        async function checkWallet() {
-            const address = document.getElementById("walletAddress").value.trim();
-            const resultDiv = document.getElementById("result");
+<div id="loading" class="loading" style="display:none;">
+    <span>.</span><span>.</span><span>.</span>
+</div>
 
-            if (!address) {
-                alert("Masukkan alamat wallet!");
-                return;
-            }
+<div id="balanceCard" class="card"></div>
+<div id="txCard" class="card"></div>
 
-            // Tampilkan loading animasi titik bergelombang
-            resultDiv.innerHTML = `<div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>`;
+<!-- Footer -->
+<div class="footer-left">
+  ❤️ Built with love by Community
+</div>
 
-            try {
-                // Ambil balance
-                const balanceRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "eth_getBalance",
-                        params: [address, "latest"]
-                    })
-                });
-                const balanceData = await balanceRes.json();
-                const balanceEth = parseInt(balanceData.result, 16) / 1e18;
+<div class="footer-right">
+  <img src="mrp.jpg" alt="Profile" class="profile-thumb">
+  <span>• Follow my X : <a href="https://twitter.com/murphyejr" target="_blank">@murphyejr</a></span>
+</div>
 
-                // Ambil total transaksi (approx dengan getTransactionCount)
-                const txRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "eth_getTransactionCount",
-                        params: [address, "latest"]
-                    })
-                });
-                const txData = await txRes.json();
-                const txCount = parseInt(txData.result, 16);
+<script>
+const apiKey = "P9QADugjmL2Ib2ivnLv_j";
 
-                // Animasi hasil muncul satu per satu
-                resultDiv.innerHTML = "";
-                setTimeout(() => {
-                    resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)}</b></div>`;
-                    setTimeout(() => {
-                        resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount}</b></div>`;
-                    }, 500);
-                }, 500);
+async function checkWallet() {
+    const address = document.getElementById("walletAddress").value.trim();
+    if (!address) {
+        alert("Enter your Address");
+        return;
+    }
 
-            } catch (err) {
-                resultDiv.innerHTML = `<div style="color:red;">Gagal mengambil data</div>`;
-                console.error(err);
-            }
-        }
-    </script>
+    document.getElementById("loading").style.display = "inline-block";
+    document.getElementById("balanceCard").classList.remove("show");
+    document.getElementById("txCard").classList.remove("show");
+
+    try {
+        // xgb
+        const balanceRes = await fetch(`https://monad-testnet.g.alchemy.com/v2/${apiKey}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: 1,
+                jsonrpc: "2.0",
+                method: "eth_getBalance",
+                params: [address, "latest"]
+            })
+        });
+        const balanceData = await balanceRes.json();
+        const balance = parseInt(balanceData.result, 16) / 1e18;
+
+        // xgtt
+        const txRes = await fetch(`https://monad-mainnet.g.alchemy.com/v2/${apiKey}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                id: 1,
+                jsonrpc: "2.0",
+                method: "eth_getTransactionCount",
+                params: [address, "latest"]
+            })
+        });
+        const txData = await txRes.json();
+        const txCount = parseInt(txData.result, 16);
+
+        document.getElementById("loading").style.display = "none";
+
+        document.getElementById("balanceCard").innerHTML = `Total Balance: <b>${balance} $MON</b>`;
+        document.getElementById("txCard").innerHTML = `Total Transactions: <b>${txCount} txn</b>`;
+
+        setTimeout(() => document.getElementById("balanceCard").classList.add("show"), 200);
+        setTimeout(() => document.getElementById("txCard").classList.add("show"), 800);
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to fetch");
+        document.getElementById("loading").style.display = "none";
+    }
+}
+</script>
+
 </body>
 </html>
