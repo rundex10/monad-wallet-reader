@@ -191,9 +191,9 @@
 
                 resultDiv.innerHTML = "";
                 setTimeout(() => {
-                    resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)}</b></div>`;
+                    resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)} $MON</b></div>`;
                     setTimeout(() => {
-                        resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount}</b></div>`;
+                        resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
                     }, 500);
                 }, 500);
 
