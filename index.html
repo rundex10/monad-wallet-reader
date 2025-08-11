@@ -7,32 +7,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>💜 Monad Wallet Reader</h1>
-
-    <div class="input-group">
-        <input type="text" id="address" placeholder="Masukkan address Monad">
-        <button onclick="getWalletData()">Cek Wallet</button>
-    </div>
-
-    <!-- Loading -->
-    <div id="loading" class="loading hidden">
-        <div class="spinner"></div>
-        <p>Memproses data wallet...</p>
-    </div>
-
-    <!-- Hasil -->
-    <div id="result" class="hidden">
-        <div class="card fade-in" id="balance-card">
-            <p>Total Balance:</p>
-            <span id="balance">-</span>
+    <div class="container">
+        <h1>💜 Monad Wallet Reader</h1>
+        <div class="input-group">
+            <input type="text" id="walletAddress" placeholder="Masukkan alamat wallet Monad">
+            <button onclick="checkWallet()">Cek Wallet</button>
         </div>
-        <div class="card fade-in" id="nft-card">
-            <p>Total NFTs:</p>
-            <span id="nfts">-</span>
-        </div>
-        <div class="card fade-in" id="tx-card">
-            <p>Total Transactions:</p>
-            <span id="tx">-</span>
+
+        <div id="loading" class="loading" style="display:none;">⏳ Loading...</div>
+
+        <div id="results" style="display:none;">
+            <div class="card">
+                <p>Total Balance:</p>
+                <h2 id="balance">-</h2>
+            </div>
+            <div class="card">
+                <p>Total Transactions:</p>
+                <h2 id="transactions">-</h2>
+            </div>
         </div>
     </div>
 
