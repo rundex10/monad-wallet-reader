@@ -155,7 +155,7 @@
             const resultDiv = document.getElementById("result");
 
             if (!address) {
-                alert("Masukkan alamat wallet!");
+                alert("Address form cannot be empty");
                 return;
             }
 
@@ -198,7 +198,7 @@
                 }, 500);
 
             } catch (err) {
-                resultDiv.innerHTML = `<div style="color:red;">Gagal mengambil data</div>`;
+                resultDiv.innerHTML = `<div style="color:red;">Failed to fetch</div>`;
                 console.error(err);
             }
         }
