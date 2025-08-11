@@ -1,19 +1,22 @@
 const API_KEY = "P9QADugjmL2Ib2ivnLv_j";
-const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${API_KEY}`;
+const BASE_URL = `https://eth-sepolia.g.alchemy.com/v2/${API_KEY}`; // ganti dengan network yang sesuai
 
-async function getWalletData() {
-    const address = document.getElementById("address").value.trim();
+async function checkWallet() {
+    const address = document.getElementById("walletAddress").value.trim();
+    const loading = document.getElementById("loading");
+    const results = document.getElementById("results");
+
     if (!address) {
-        alert("Masukkan address dulu!");
+        alert("Masukkan alamat wallet!");
         return;
     }
 
     // Tampilkan loading, sembunyikan hasil
-    document.getElementById("loading").classList.remove("hidden");
-    document.getElementById("result").classList.add("hidden");
+    loading.style.display = "block";
+    results.style.display = "none";
 
     try {
-        // 1. Ambil Balance
+        // Ambil Balance
         const balanceRes = await fetch(BASE_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -27,43 +30,32 @@ async function getWalletData() {
         const balanceData = await balanceRes.json();
         const balanceEth = parseInt(balanceData.result, 16) / 1e18;
 
-        // 2. Dummy NFT count (ubah ke API asli jika ada)
-        const nftCount = Math.floor(Math.random() * 10);
-
-        // 3. Ambil Total TX Count
+        // Ambil Total Transactions
         const txRes = await fetch(BASE_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 jsonrpc: "2.0",
-                id: 1,
+                id: 2,
                 method: "eth_getTransactionCount",
                 params: [address, "latest"]
             })
         });
         const txData = await txRes.json();
-        const txCount = parseInt(txData.result, 16);
+        const totalTx = parseInt(txData.result, 16);
 
-        // Delay untuk animasi tampil satu-satu
-        setTimeout(() => {
-            document.getElementById("loading").classList.add("hidden");
-            document.getElementById("result").classList.remove("hidden");
+        // Update hasil dengan animasi delay
+        document.getElementById("balance").textContent = balanceEth.toFixed(4) + " ETH";
+        await new Promise(r => setTimeout(r, 400));
+        document.getElementById("transactions").textContent = totalTx;
 
-            showWithDelay("balance", balanceEth.toFixed(4), 0);
-            showWithDelay("nfts", nftCount, 500);
-            showWithDelay("tx", txCount, 1000);
-        }, 1000);
+        // Tampilkan hasil
+        loading.style.display = "none";
+        results.style.display = "block";
 
     } catch (error) {
         console.error(error);
-        alert("Gagal mengambil data wallet");
-        document.getElementById("loading").classList.add("hidden");
+        alert("Terjadi kesalahan saat mengambil data wallet.");
+        loading.style.display = "none";
     }
-}
-
-function showWithDelay(id, value, delay) {
-    setTimeout(() => {
-        document.getElementById(id).innerText = value;
-        document.getElementById(`${id}-card`)?.classList.add("show");
-    }, delay);
 }
