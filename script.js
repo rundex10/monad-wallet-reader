@@ -1,4 +1,4 @@
-const API_KEY = "MASUKKAN_API_KEY_KAMU";
+const API_KEY = "P9QADugjmL2Ib2ivnLv_j";
 const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${API_KEY}`;
 
 async function getWalletData() {
