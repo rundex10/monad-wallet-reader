@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monad Wallet Reader</title>
+    <title>Monad Allocation Checker</title>
     <style>
         @font-face {
             font-family: 'CustomFont';
@@ -67,7 +67,6 @@
             font-size: 18px;
         }
 
-        /* Loading animasi titik bergelombang */
         .loading {
             display: inline-block;
             font-size: 20px;
@@ -86,7 +85,6 @@
             30% { transform: translateY(-8px); }
         }
 
-        /* Footer kiri */
         .footer-left {
             position: fixed;
             bottom: 15px;
@@ -99,7 +97,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Footer kanan */
         .footer-right {
             position: fixed;
             bottom: 15px;
@@ -134,25 +131,23 @@
     </style>
 </head>
 <body>
-    <h1>💜 Monad Wallet Reader</h1>
+    <h1>💜 Monad Allocation CHecker (Beta)</h1>
     <input type="text" id="walletAddress" class="wallet-input" placeholder="Masukkan alamat Monad">
-    <button onclick="checkWallet()" class="btn">Cek Wallet</button>
+    <button onclick="checkWallet()" class="btn">Begin</button>
 
     <div id="result" style="margin-top: 20px;"></div>
 
-    <!-- Footer kiri -->
     <div class="footer-left">
-      ❤️ Built with love by Community
+      💜 Built with love by Community
     </div>
 
-    <!-- Footer kanan -->
     <div class="footer-right">
       <img src="mrp.jpg" alt="Profile" class="profile-thumb">
       <span>• Follow my X : <a href="https://twitter.com/murphyejr" target="_blank">@murphyejr</a></span>
     </div>
 
     <script>
-        const ALCHEMY_KEY = "P9QADugjmL2Ib2ivnLv_j"; // API key langsung di kode
+        const ALCHEMY_KEY = "P9QADugjmL2Ib2ivnLv_j";
         const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
 
         async function checkWallet() {
@@ -164,11 +159,10 @@
                 return;
             }
 
-            // Tampilkan loading animasi titik bergelombang
             resultDiv.innerHTML = `<div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>`;
 
             try {
-                // Ambil balance
+            
                 const balanceRes = await fetch(BASE_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -182,7 +176,6 @@
                 const balanceData = await balanceRes.json();
                 const balanceEth = parseInt(balanceData.result, 16) / 1e18;
 
-                // Ambil total transaksi
                 const txRes = await fetch(BASE_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -196,7 +189,6 @@
                 const txData = await txRes.json();
                 const txCount = parseInt(txData.result, 16);
 
-                // Animasi hasil muncul satu per satu
                 resultDiv.innerHTML = "";
                 setTimeout(() => {
                     resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)}</b></div>`;
