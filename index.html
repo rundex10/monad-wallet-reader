@@ -1,36 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Monad Wallet Reader</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monad Wallet Reader</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Monad Wallet Reader</h2>
-  <input id="addr" placeholder="Masukkan alamat Monad (0x...)" style="width:300px;">
-  <button id="checkBtn">Cek</button>
+    <h1>Monad Wallet Reader</h1>
+    <input type="text" id="address" placeholder="Masukkan address Monad">
+    <button onclick="getWalletData()">Cek Wallet</button>
 
-  <div id="result"></div>
+    <div id="result">
+        <p>Total Balance: <span id="balance">-</span></p>
+        <p>Total NFTs: <span id="nfts">-</span></p>
+        <p>Total Transactions: <span id="tx">-</span></p>
+    </div>
 
-  <script>
-    document.getElementById('checkBtn').onclick = async () => {
-      const addr = document.getElementById('addr').value.trim();
-      if (!addr) return alert('Alamat harus diisi');
-
-      document.getElementById('result').innerHTML = 'Loading...';
-
-      try {
-        const res = await fetch(`/.netlify/functions/getData?address=${addr}`);
-        const data = await res.json();
-
-        document.getElementById('result').innerHTML = `
-          <p><b>Total Balance:</b> ${data.balance} MON</p>
-          <p><b>Total TX:</b> ${data.txCount}</p>
-          <p><b>Total NFTs:</b> ${data.nftCount}</p>
-        `;
-      } catch (err) {
-        document.getElementById('result').innerHTML = 'Error: ' + err.message;
-      }
-    };
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
