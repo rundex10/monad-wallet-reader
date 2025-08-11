@@ -1,149 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monad Wallet Reader</title>
-    <style>
-        body {
-    font-family: Arial, sans-serif;
-    background: url('bg.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-    text-align: center;
-    padding: 20px;
-}
-        h1 {
-            color: #d291ff;
-        }
-        input, button {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            margin: 5px;
-            font-size: 16px;
-        }
-        input {
-            width: 300px;
-            background: linear-gradient(135deg, #1b0033, #2d0054);
-            color: white;
-            border: 1px solid #5a1aff;
-        }
-        input:focus {
-            outline: none;
-            border: 1px solid #a64dff;
-            box-shadow: 0 0 8px #a64dff;
-        }
-        button {
-            background: linear-gradient(135deg, #7a2cff, #b266ff);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background: linear-gradient(135deg, #5c1aff, #a64dff);
-            transform: scale(1.05);
-        }
-        .card {
-            background: linear-gradient(135deg, #1b0033, #2d0054);
-            padding: 15px;
-            margin: 15px auto;
-            border-radius: 12px;
-            width: 250px;
-            border: 1px solid #5a1aff;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-        }
-        .card.show {
-            opacity: 1;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monad Wallet Reader</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: url('bg.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        text-align: center;
+    }
+
+    header {
+        font-size: 2em;
+        font-weight: bold;
+        padding: 20px;
+        color: #d6a2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .wallet-input {
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        width: 300px;
+        outline: none;
+        background: linear-gradient(135deg, #3b0066, #5e00a3);
+        color: white;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #5e00a3, #a32cc4);
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        background: linear-gradient(135deg, #a32cc4, #5e00a3);
+    }
+
+    .card {
+        margin: 20px auto;
+        padding: 15px;
+        width: 250px;
+        background: rgba(50, 0, 80, 0.8);
+        border-radius: 10px;
+        border: 1px solid #a32cc4;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease;
+    }
+
+    .card.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Loading titik ombak */
+    .loading {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        height: 50px;
+        margin-top: 20px;
+    }
+
+    .loading span {
+        display: inline-block;
+        animation: wave 1.5s infinite ease-in-out;
+    }
+
+    .loading span:nth-child(1) {
+        animation-delay: 0s;
+    }
+    .loading span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .loading span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes wave {
+        0%, 60%, 100% {
             transform: translateY(0);
         }
-        .loading {
-            display: none;
-            margin-top: 20px;
-            color: #d291ff;
-            font-weight: bold;
+        30% {
+            transform: translateY(-10px);
         }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <h1>💜 Monad Wallet Reader</h1>
-    <input type="text" id="walletAddress" placeholder="Masukkan alamat wallet Monad">
-    <button onclick="checkWallet()">Cek Wallet</button>
 
-    <div class="loading" id="loading">⏳ Loading...</div>
+<header>💜 Monad Wallet Reader</header>
 
-    <div id="results">
-        <div class="card" id="balanceCard">
-            <p>Total Balance:</p>
-            <h2 id="balance">-</h2>
-        </div>
-        <div class="card" id="txCard">
-            <p>Total Transactions:</p>
-            <h2 id="transactions">-</h2>
-        </div>
-    </div>
+<div>
+    <input type="text" id="wallet" class="wallet-input" placeholder="Masukkan address Monad">
+    <button id="cekButton" class="btn">Cek Wallet</button>
+</div>
 
-    <script>
-        const API_KEY = "P9QADugjmL2Ib2ivnLv_j";
-        const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${API_KEY}`;
+<div id="loading" class="loading">
+    <span>.</span>
+    <span>.</span>
+    <span>.</span>
+</div>
 
-        async function checkWallet() {
-            const address = document.getElementById("walletAddress").value.trim();
-            if (!address) {
-                alert("Masukkan alamat wallet Monad!");
-                return;
-            }
+<div id="result">
+    <div id="balanceCard" class="card">Total Balance: <b id="balance">-</b></div>
+    <div id="txCard" class="card">Total Transactions: <b id="transactions">-</b></div>
+</div>
 
-            document.getElementById("loading").style.display = "block";
-            document.getElementById("balanceCard").classList.remove("show");
-            document.getElementById("txCard").classList.remove("show");
+<script>
+const API_KEY = "P9QADugjmL2Ib2ivnLv_j"; // API Key Alchemy Monad Testnet
+const RPC_URL = `https://monad-testnet.g.alchemy.com/v2/${API_KEY}`;
 
-            try {
-                // Ambil balance
-                const balanceRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        method: "eth_getBalance",
-                        params: [address, "latest"],
-                        id: 1
-                    })
-                });
-                const balanceData = await balanceRes.json();
-                const balanceEth = parseInt(balanceData.result, 16) / 1e18;
+document.getElementById("cekButton").addEventListener("click", async () => {
+    const address = document.getElementById("wallet").value.trim();
+    if (!address) {
+        alert("Masukkan address terlebih dahulu!");
+        return;
+    }
 
-                // Ambil total transaksi
-                const txRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        method: "eth_getTransactionCount",
-                        params: [address, "latest"],
-                        id: 2
-                    })
-                });
-                const txData = await txRes.json();
-                const totalTx = parseInt(txData.result, 16);
+    // Reset tampilan
+    document.getElementById("balanceCard").classList.remove("show");
+    document.getElementById("txCard").classList.remove("show");
+    document.getElementById("loading").style.display = "flex";
 
-                document.getElementById("loading").style.display = "none";
+    try {
+        // Ambil balance
+        const balanceRes = await fetch(RPC_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: 1,
+                method: "eth_getBalance",
+                params: [address, "latest"]
+            })
+        });
+        const balanceData = await balanceRes.json();
+        const balanceEth = parseInt(balanceData.result, 16) / 1e18;
 
-                // Animasi muncul satu-satu
-                document.getElementById("balance").innerText = balanceEth.toFixed(4) + " MON";
-                setTimeout(() => document.getElementById("balanceCard").classList.add("show"), 200);
+        // Ambil total transaksi
+        const txRes = await fetch(RPC_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: 2,
+                method: "eth_getTransactionCount",
+                params: [address, "latest"]
+            })
+        });
+        const txData = await txRes.json();
+        const txCount = parseInt(txData.result, 16);
 
-                document.getElementById("transactions").innerText = totalTx;
-                setTimeout(() => document.getElementById("txCard").classList.add("show"), 600);
+        // Delay animasi loading 3 detik
+        await new Promise(resolve => setTimeout(resolve, 3000));
 
-            } catch (err) {
-                document.getElementById("loading").style.display = "none";
-                alert("Gagal mengambil data. Cek API Key atau alamat wallet.");
-                console.error(err);
-            }
-        }
-    </script>
+        // Tampilkan hasil satu per satu
+        document.getElementById("loading").style.display = "none";
+
+        document.getElementById("balance").textContent = balanceEth.toFixed(4);
+        document.getElementById("balanceCard").classList.add("show");
+
+        setTimeout(() => {
+            document.getElementById("transactions").textContent = txCount;
+            document.getElementById("txCard").classList.add("show");
+        }, 500);
+
+    } catch (err) {
+        console.error(err);
+        alert("Gagal mengambil data wallet!");
+        document.getElementById("loading").style.display = "none";
+    }
+});
+</script>
+
 </body>
 </html>
