@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1a001f;
+            background: linear-gradient(135deg, #1a001f, #33004d);
             color: white;
             text-align: center;
             padding: 20px;
@@ -24,21 +24,32 @@
         }
         input {
             width: 300px;
+            background: linear-gradient(135deg, #1b0033, #2d0054);
+            color: white;
+            border: 1px solid #5a1aff;
+        }
+        input:focus {
+            outline: none;
+            border: 1px solid #a64dff;
+            box-shadow: 0 0 8px #a64dff;
         }
         button {
-            background-color: #a64dff;
+            background: linear-gradient(135deg, #7a2cff, #b266ff);
             color: white;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         button:hover {
-            background-color: #8c1aff;
+            background: linear-gradient(135deg, #5c1aff, #a64dff);
+            transform: scale(1.05);
         }
         .card {
-            background-color: #33004d;
+            background: linear-gradient(135deg, #1b0033, #2d0054);
             padding: 15px;
             margin: 15px auto;
             border-radius: 12px;
             width: 250px;
+            border: 1px solid #5a1aff;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.5s ease;
@@ -119,7 +130,7 @@
 
                 document.getElementById("loading").style.display = "none";
 
-                // Tampilkan hasil dengan animasi
+                // Animasi muncul satu-satu
                 document.getElementById("balance").innerText = balanceEth.toFixed(4) + " MON";
                 setTimeout(() => document.getElementById("balanceCard").classList.add("show"), 200);
 
