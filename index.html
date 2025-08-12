@@ -283,21 +283,39 @@
             }, 500);
         }, 500);
     }
-</script>
-    <script>
+<style>
+@font-face {
+    font-family: 'NotoCustom';
+    src: url('./noto.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.mobile-warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    font-family: 'NotoCustom', Arial, sans-serif;
+}
+</style>
+
+<script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Deteksi mobile (lebar layar kecil atau user agent mengandung tanda HP)
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
     if (isMobile) {
-        // Hapus seluruh isi body
         document.body.innerHTML = `
-            <div style="display:flex;justify-content:center;align-items:center;height:100vh;background:black;color:white;text-align:center;padding:20px;font-size:18px;font-family:Arial, sans-serif;">
-                Mohon aktifkan mode desktop di browser Anda untuk mengakses halaman ini.
+            <div class="mobile-warning">
+                Please enable desktop mode in your browser to access this page.
             </div>
         `;
     }
 });
-    </script>
+</script>
 </body>
 </html>
