@@ -227,6 +227,7 @@
             const txData = await txRes.json();
             const txCount = parseInt(txData.result, 16);
 
+      if (txCount === 0) {
             resultDiv.innerHTML = "";
             setTimeout(() => {
                 resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)} $MON</b></div>`;
@@ -238,7 +239,8 @@
                     }, 500);
                 }, 500);
             }, 500);
-
+            return;
+          
         } catch (err) {
             resultDiv.innerHTML = `<div style="color:red;">Failed to fetch</div>`;
             console.error(err);
