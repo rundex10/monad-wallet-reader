@@ -149,61 +149,93 @@
     </div>
 
     <script>
-        const ALCHEMY_KEY = "P9QADugjmL2Ib2ivnLv_j";
-        const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
+    const ALCHEMY_KEY = "P9QADugjmL2Ib2ivnLv_j";
+    const BASE_URL = `https://monad-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}`;
 
-        async function checkWallet() {
-            const address = document.getElementById("walletAddress").value.trim();
-            const resultDiv = document.getElementById("result");
+    function getExpectedMonAllocation(totalTx) {
+        let min, max;
 
-            if (!address) {
-                alert("Address form cannot be empty");
-                return;
-            }
+        if (totalTx <= 499) {
+            max = 100; min = 1;
+        } else if (totalTx <= 999) {
+            max = 200; min = 100;
+        } else if (totalTx <= 1999) {
+            max = 300; min = 200;
+        } else if (totalTx <= 4999) {
+            max = 400; min = 300;
+        } else if (totalTx <= 9999) {
+            max = 500; min = 400;
+        } else if (totalTx <= 49999) {
+            max = 600; min = 500;
+        } else if (totalTx <= 99999) {
+            max = 700; min = 600;
+        } else if (totalTx <= 499999) {
+            max = 800; min = 700;
+        } else if (totalTx <= 999999) {
+            max = 900; min = 800;
+        } else {
+            max = 1000; min = 900;
+        }
 
-            resultDiv.innerHTML = `<div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>`;
+        return `${min} - ${max} $MON`;
+    }
 
-            try {
-            
-                const balanceRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "eth_getBalance",
-                        params: [address, "latest"]
-                    })
-                });
-                const balanceData = await balanceRes.json();
-                const balanceEth = parseInt(balanceData.result, 16) / 1e18;
+    async function checkWallet() {
+        const address = document.getElementById("walletAddress").value.trim();
+        const resultDiv = document.getElementById("result");
 
-                const txRes = await fetch(BASE_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "eth_getTransactionCount",
-                        params: [address, "latest"]
-                    })
-                });
-                const txData = await txRes.json();
-                const txCount = parseInt(txData.result, 16);
+        if (!address) {
+            alert("Address form cannot be empty");
+            return;
+        }
 
-                resultDiv.innerHTML = "";
+        resultDiv.innerHTML = `<div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>`;
+
+        try {
+        
+            const balanceRes = await fetch(BASE_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "eth_getBalance",
+                    params: [address, "latest"]
+                })
+            });
+            const balanceData = await balanceRes.json();
+            const balanceEth = parseInt(balanceData.result, 16) / 1e18;
+
+            const txRes = await fetch(BASE_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "eth_getTransactionCount",
+                    params: [address, "latest"]
+                })
+            });
+            const txData = await txRes.json();
+            const txCount = parseInt(txData.result, 16);
+
+            resultDiv.innerHTML = "";
+            setTimeout(() => {
+                resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)} $MON</b></div>`;
                 setTimeout(() => {
-                    resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)} $MON</b></div>`;
+                    resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
                     setTimeout(() => {
-                        resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
+                        const allocation = getExpectedMonAllocation(txCount);
+                        resultDiv.innerHTML += `<div class="card">Expected $MON Allocation: <b>${allocation}</b></div>`;
                     }, 500);
                 }, 500);
+            }, 500);
 
-            } catch (err) {
-                resultDiv.innerHTML = `<div style="color:red;">Failed to fetch</div>`;
-                console.error(err);
-            }
+        } catch (err) {
+            resultDiv.innerHTML = `<div style="color:red;">Failed to fetch</div>`;
+            console.error(err);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
