@@ -147,6 +147,37 @@
         .footer-right a:hover {
             text-decoration: underline;
         }
+        
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        .wallet-input, .btn, .card {
+            width: 90%;
+            font-size: 14px;
+        }
+
+        .footer-left, .footer-right, .tip-message {
+            position: static;
+            margin: 10px auto;
+            display: block;
+            text-align: center;
+            border: none;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .footer-right {
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .profile-thumb {
+            width: 30px;
+            height: 30px;
+        }
+            }
     </style>
 </head>
 <body>
