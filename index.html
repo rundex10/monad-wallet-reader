@@ -148,6 +148,36 @@
             text-decoration: underline;
         }
         
+        @media (max-width: 768px) {
+    .footer-left, .footer-right, .tip-message {
+        position: static;
+        display: block;
+        margin: 10px auto;
+        text-align: center;
+        background: none;
+        border: none;
+        backdrop-filter: none;
+    }
+
+    .footer-right {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .profile-thumb {
+        width: 30px;
+        height: 30px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .wallet-input, .btn, .card {
+        width: 90%;
+        font-size: 14px;
+    }
+        
     @media (max-width: 768px) {
         h1 {
             font-size: 1.8rem;
