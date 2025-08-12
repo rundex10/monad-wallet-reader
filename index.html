@@ -68,6 +68,12 @@
             font-size: 18px;
         }
 
+        .card-allocation {
+           background: linear-gradient(135deg, #006400, #000000);
+           border: 1px solid #00ff99;
+           color: #ffffff;
+        }
+
         .loading {
             display: inline-block;
             font-size: 20px;
@@ -228,7 +234,7 @@
                     resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
                     setTimeout(() => {
                         const allocation = getExpectedMonAllocation(txCount);
-                        resultDiv.innerHTML += `<div class="card">Expected Allocation: <b>${allocation}</b></div>`;
+                        resultDiv.innerHTML += `<div class="card card-allocation">Expected Allocation: <b>${allocation}</b></div>`;
                     }, 500);
                 }, 500);
             }, 500);
