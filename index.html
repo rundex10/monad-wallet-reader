@@ -211,7 +211,7 @@
             return;
         }
 
-        // Cek jika ada hasil sebelumnya di localStorage
+        
         const savedData = localStorage.getItem(`alloc_${address}`);
         if (savedData) {
             const parsed = JSON.parse(savedData);
@@ -283,35 +283,16 @@
             }, 500);
         }, 500);
     }
-<style>
-@font-face {
-    font-family: 'NotoCustom';
-    src: url('./noto.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-.mobile-warning {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: black;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    font-size: 18px;
-    font-family: 'NotoCustom', Arial, sans-serif;
-}
-</style>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
     if (isMobile) {
+        
         document.body.innerHTML = `
-            <div class="mobile-warning">
-                Please enable desktop mode in your browser to access this page.
+            <div style="display:flex;justify-content:center;align-items:center;height:100vh;background:black;color:white;text-align:center;padding:20px;font-size:18px;font-family:Arial, sans-serif;">
+                Mohon aktifkan mode desktop di browser Anda untuk mengakses halaman ini.
             </div>
         `;
     }
