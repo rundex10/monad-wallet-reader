@@ -199,7 +199,6 @@
         }
 
         let randomAlloc = (Math.random() * (max - min) + min).toFixed(2);
-
         return `${randomAlloc} $MON`;
     }
 
@@ -212,10 +211,17 @@
             return;
         }
 
+        // Cek jika ada hasil sebelumnya di localStorage
+        const savedData = localStorage.getItem(`alloc_${address}`);
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            showResult(parsed.balanceEth, parsed.txCount, parsed.allocation);
+            return;
+        }
+
         resultDiv.innerHTML = `<div class="loading"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>`;
 
         try {
-
             const balanceRes = await fetch(BASE_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -242,38 +248,40 @@
             const txData = await txRes.json();
             const txCount = parseInt(txData.result, 16);
 
-            // ======= ADDITION: jika txCount kosong/NaN atau 0 tampilkan 0 dan hentikan =======
+            let allocation;
             if (!txData.result || isNaN(txCount) || txCount === 0) {
-                resultDiv.innerHTML = "";
-                setTimeout(() => {
-                    resultDiv.innerHTML += `<div class="card">Total Balance: <b>${isNaN(balanceEth) ? '0.000000' : balanceEth.toFixed(6)} $MON</b></div>`;
-                    setTimeout(() => {
-                        resultDiv.innerHTML += `<div class="card">Total Transactions: <b>0 txn</b></div>`;
-                        setTimeout(() => {
-                            resultDiv.innerHTML += `<div class="card card-allocation">Expected Allocation: <b>0 $MON</b></div>`;
-                        }, 500);
-                    }, 500);
-                }, 500);
-                return; // berhenti agar tidak lanjut ke perhitungan random
+                allocation = "0 $MON";
+            } else {
+                allocation = getExpectedMonAllocation(txCount);
             }
-            // ======= END ADDITION =======
 
-            resultDiv.innerHTML = "";
-            setTimeout(() => {
-                resultDiv.innerHTML += `<div class="card">Total Balance: <b>${balanceEth.toFixed(6)} $MON</b></div>`;
-                setTimeout(() => {
-                    resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
-                    setTimeout(() => {
-                        const allocation = getExpectedMonAllocation(txCount);
-                        resultDiv.innerHTML += `<div class="card card-allocation">Expected Allocation: <b>${allocation}</b></div>`;
-                    }, 500);
-                }, 500);
-            }, 500);
+            // Simpan hasil ke localStorage
+            localStorage.setItem(`alloc_${address}`, JSON.stringify({
+                balanceEth,
+                txCount,
+                allocation
+            }));
+
+            showResult(balanceEth, txCount, allocation);
 
         } catch (err) {
             resultDiv.innerHTML = `<div style="color:red;">Failed to fetch</div>`;
             console.error(err);
         }
+    }
+
+    function showResult(balanceEth, txCount, allocation) {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "";
+        setTimeout(() => {
+            resultDiv.innerHTML += `<div class="card">Total Balance: <b>${isNaN(balanceEth) ? '0.000000' : balanceEth.toFixed(6)} $MON</b></div>`;
+            setTimeout(() => {
+                resultDiv.innerHTML += `<div class="card">Total Transactions: <b>${txCount} txn</b></div>`;
+                setTimeout(() => {
+                    resultDiv.innerHTML += `<div class="card card-allocation">Expected Allocation: <b>${allocation}</b></div>`;
+                }, 500);
+            }, 500);
+        }, 500);
     }
 </script>
 </body>
